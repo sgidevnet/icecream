@@ -30,6 +30,10 @@
 
 #include <exception>
 
+#ifdef __sgi
+#include <fcntl.h>
+#endif
+
 class MsgChannel;
 class CompileResultMsg;
 
