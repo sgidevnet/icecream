@@ -369,8 +369,11 @@ int build_local(CompileJob &job, MsgChannel *local_daemon, struct rusage *used)
     }
 
     int status = 1;
-
+#ifdef __sgi
+    while (waitpid(child_pid, &status, 0) < 0 && errno == EINTR) {}
+#else
     while (wait4(child_pid, &status, 0, used) < 0 && errno == EINTR) {}
+#endif
 
     status = shell_exit_status(status);
 
