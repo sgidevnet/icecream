@@ -167,6 +167,12 @@ void reset_debug_signal_handler(int)
     reset_debug_needed = 1;
 }
 
+
+#ifdef __sgi
+void reset_debug_if_needed() {
+    return;
+}
+#else
 void reset_debug_if_needed()
 {
     if( reset_debug_needed ) {
@@ -196,6 +202,7 @@ void reset_debug_if_needed()
         }
     }
 }
+#endif
 
 void close_debug()
 {
