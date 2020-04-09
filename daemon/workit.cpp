@@ -644,11 +644,16 @@ int work_it(CompileJob &j, unsigned int job_stat[], MsgChannel *client, CompileR
                 struct rusage ru;
                 int status;
 
+#ifdef __sgi
+                if (waitpid(pid, &status, 0) != pid) {
+#else
                 if (wait4(pid, &status, 0, &ru) != pid) {
+#endif
                     // this should never happen
                     assert(false);
                     return EXIT_DISTCC_FAILED;
                 }
+
 
                 if (shell_exit_status(status) != 0) {
                     if( !rmsg.out.empty())

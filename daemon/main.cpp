@@ -713,7 +713,13 @@ bool Daemon::setup_listen_unix_fd()
         }
     }
 
+#ifdef __sgi
+    struct sockaddr s_myaddr;
+    memcpy(&s_myaddr, &myaddr, sizeof(struct sockaddr));
+    if (::bind(unix_listen_fd, &s_myaddr, sizeof(myaddr)) < 0) {
+#else
     if (::bind(unix_listen_fd, (struct sockaddr*)&myaddr, sizeof(myaddr)) < 0) {
+#endif
         log_perror("Failed to bind address to unix listen socket");
 
         if (reset_umask) {
@@ -2510,11 +2516,22 @@ int main(int argc, char **argv)
         exit(EXIT_DISTCC_FAILED);
     }
 
-    if (detach)
+    if (detach) {
+#ifdef __sgi
+        pid_t daemon_pid = fork();
+        if (daemon_pid) {
+            exit(0);
+        } else {
+            chdir("/");
+            setsid();
+        }
+#else
         if (daemon(0, 0)) {
             log_perror("Failed to run as a daemon.");
             exit(EXIT_DISTCC_FAILED);
         }
+#endif
+    }
 
     if (dcc_ncpus(&d.num_cpus) == 0) {
         log_info() << d.num_cpus << " CPU(s) online on this server" << endl;

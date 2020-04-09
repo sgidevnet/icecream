@@ -14,6 +14,19 @@
 
 using namespace std;
 
+// surely not replacing it with something would fuck a lot of things up
+#ifdef __sgi
+vector<string> split(const string &s, char delim) {
+  char *token = strtok((char*) s.c_str(), &delim);
+  vector<string> elems;
+  while (token != NULL) {
+      elems.push_back(token);
+      token = strtok(NULL, &delim);
+  }
+
+  return elems;
+}
+#else
 /**
  * Adapted from an answer by "Evan Teran" from this stack overflow question:
  * http://stackoverflow.com/questions/236129/split-a-string-in-c
@@ -29,6 +42,7 @@ vector<string> split(const string &s, char delim) {
     }
     return elems;
 }
+#endif
 
 /**
  * Adapted from an answer by "dash-tom-bang" from this stack overflow question:

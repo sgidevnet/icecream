@@ -90,6 +90,10 @@
    must remove all traces of jobs resulting from that client in all lists.
  */
 
+#ifdef __sgi
+#include <signal.h>
+#endif
+
 using namespace std;
 
 static string pidFilePath;
@@ -2074,10 +2078,20 @@ int main(int argc, char *argv[])
     log_info() << "ICECREAM scheduler " VERSION " starting up, port " << scheduler_port << endl;
 
     if (detach) {
+#ifdef __sgi
+        pid_t daemon_pid = fork();
+        if (daemon_pid) {
+            exit(0);
+        } else {
+            chdir("/");
+            setsid();
+        }
+#else
         if (daemon(0, 0) != 0) {
             log_errno("Failed to detach.", errno);
             exit(1);
         }
+#endif
     }
 
     listen_fd = open_tcp_listener(scheduler_port, scheduler_interface);

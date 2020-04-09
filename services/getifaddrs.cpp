@@ -212,7 +212,12 @@ int kde_getifaddrs(struct kde_ifaddrs **ifap)
                 break;
             }
 
+#ifdef __sgi
+            struct sockaddr_in* sain = (struct sockaddr_in*) &ifr->ifr_addr;
+            storage[i].netmask = *(struct sockaddr *)sain->sin_addr.s_addr;
+#else
             storage[i].netmask = ifr->ifr_netmask;
+#endif
 
             if (ifr->ifr_flags & IFF_BROADCAST) {
                 ifr->ifr_addr = storage[i].addr;

@@ -77,7 +77,12 @@ static int zstd_compression()
         return ZSTD_CLEVEL_DEFAULT;
 
     char *endptr;
+#ifdef __sgi
+    int n = ZSTD_CLEVEL_DEFAULT;
+#else
     int n = strtol(level, &endptr, 0);
+#endif
+    
     if (*endptr)
         return ZSTD_CLEVEL_DEFAULT;
     return n;

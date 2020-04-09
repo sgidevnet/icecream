@@ -34,6 +34,8 @@
 
 #ifdef HAVE_MACH_HOST_INFO_H
 #define USE_MACH 1
+#elif defined(__sgi)
+#define USE_NOTHING
 #elif !defined( __linux__ ) && !defined(__CYGWIN__)
 #define USE_SYSCTL
 #endif
